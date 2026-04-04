@@ -329,9 +329,9 @@ export default function PredictPage() {
                                  <div className="w-20 h-20 shrink-0 rounded-full flex items-center justify-center relative">
                                    <svg viewBox="0 0 80 80" className="absolute inset-0 w-full h-full -rotate-90 overflow-visible">
                                       <circle cx="40" cy="40" r="36" fill="transparent" stroke="currentColor" strokeWidth="4" className="text-white/5" />
-                                      <circle cx="40" cy="40" r="36" fill="transparent" stroke="currentColor" strokeWidth="4" strokeDasharray={226} strokeDashoffset={226 - (226 * msg.resultData.prediction.probability / 100)} strokeLinecap="round" className="text-cyan-400" />
+                                      <circle cx="40" cy="40" r="36" fill="transparent" stroke="currentColor" strokeWidth="4" strokeDasharray={226} strokeDashoffset={226 - (226 * (Array.isArray(msg.resultData.prediction.probability) ? msg.resultData.prediction.probability[0] : msg.resultData.prediction.probability) / 100)} strokeLinecap="round" className="text-cyan-400" />
                                    </svg>
-                                   <span className="text-xl font-black">{Math.round(msg.resultData.prediction.probability)}%</span>
+                                   <span className="text-xl font-black">{Math.round(Array.isArray(msg.resultData.prediction.probability) ? msg.resultData.prediction.probability[0] : msg.resultData.prediction.probability)}%</span>
                                  </div>
                                  <div className="flex-1">
                                     <p className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1">Confidence Score</p>

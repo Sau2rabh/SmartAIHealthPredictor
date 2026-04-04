@@ -113,6 +113,13 @@ exports.predictRisk = async (req, res) => {
             // Call AI Service
             const aiResponse = await axios.post(`${process.env.AI_SERVICE_URL}/predict`, aiInput);
 
+            // Extract correct probability based on prediction index and convert to percentage (0-100)
+            let probabilityValue = aiResponse.data.probability;
+            if (Array.isArray(probabilityValue)) {
+                const predIndex = aiResponse.data.prediction;
+                probabilityValue = (probabilityValue[predIndex] * 100);
+            }
+
             const enrichedData = getSpecialistAndOTC(symptoms, aiResponse.data.risk_level);
 
             // Save prediction to DB
@@ -122,7 +129,7 @@ exports.predictRisk = async (req, res) => {
                 durationDays,
                 prediction: {
                     riskLevel: aiResponse.data.risk_level,
-                    probability: aiResponse.data.probability,
+                    probability: probabilityValue,
                     recommendations: aiResponse.data.recommendations,
                     suggestedSpecialist: enrichedData.specialist,
                     otcMedicines: enrichedData.otc
