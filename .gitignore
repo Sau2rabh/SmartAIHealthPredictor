@@ -55,3 +55,9 @@ firebase-adminsdk.json
 # Logs
 *.log
 logs/
+
+# Build artifacts and audit files
+frontend-web/final_audit.json
+frontend-web/full_list.txt
+packages.txt
+*.js.map

@@ -28,8 +28,19 @@ export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 100);
-    return () => clearTimeout(timer);
+    const timer = setTimeout(() => setMounted(true), 500);
+    
+    // Silence the specific Recharts width/height warning during mount
+    const originalWarn = console.warn;
+    console.warn = (...args) => {
+      if (typeof args[0] === 'string' && args[0].includes('The width(-1) and height(-1) of chart should be greater than 0')) return;
+      originalWarn(...args);
+    };
+
+    return () => { 
+      clearTimeout(timer);
+      console.warn = originalWarn;
+    };
   }, []);
 
   useEffect(() => {
@@ -186,7 +197,8 @@ export default function DashboardPage() {
               <div className="glass-card p-6 h-80 border border-white/5">
                 <h3 className="font-bold mb-6 text-gray-300">Risk Probability Over Time</h3>
                 {mounted ? (
-                  <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={100} debounce={100}>
+                  <div className="w-full" style={{ height: 240 }}>
+                    <ResponsiveContainer width="100%" height="100%">
                     <BarChart 
                       data={[...history].reverse().map(item => ({
                       ...item,
@@ -242,7 +254,6 @@ export default function DashboardPage() {
                       <LabelList 
                         dataKey="chartProb" 
                         position="top" 
-                        formatter={(val: any) => `${Math.round(Number(val) || 0)}%`} 
                         fill="#9ca3af" 
                         fontSize={11} 
                         fontWeight="bold"
@@ -250,6 +261,7 @@ export default function DashboardPage() {
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
+              </div>
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-white/5 rounded-xl border border-dashed border-white/10 animate-pulse">
                   <span className="text-[10px] uppercase font-bold text-gray-600">Calculating dimensions...</span>

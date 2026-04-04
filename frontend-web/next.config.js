@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  turbopack: {},
 
 
   // Faster SCSS compilation on Windows — suppresses redundant warnings
@@ -18,8 +17,6 @@ const nextConfig = {
   experimental: {
     // Faster compilation for large libraries
     optimizePackageImports: ["lucide-react", "framer-motion", "axios"],
-    // Use worker threads for faster builds
-    workerThreads: true,
   },
 
   // Suppress annoying Webpack Cache warnings in terminal
@@ -38,7 +35,7 @@ const withPWA = require("@ducanh2912/next-pwa").default({
   reloadOnOnline: true,
   register: true,
   skipWaiting: true,
-  disable: process.env.NODE_ENV === "development",
+  disable: false,
   workboxOptions: {
     disableDevLogs: true,
   },
