@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { BarChart, Bar, Cell, LabelList, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
@@ -199,70 +199,67 @@ export default function DashboardPage() {
                 {mounted ? (
                   <div className="w-full" style={{ height: 240 }}>
                     <ResponsiveContainer width="100%" height="100%">
-                    <BarChart 
+                    <AreaChart 
                       data={[...history].reverse().map(item => ({
-                      ...item,
-                      chartProb: Array.isArray(item.prediction.probability) ? item.prediction.probability[0] : item.prediction.probability,
-                      chartColor: item.prediction.riskLevel === 'Low' ? '#4ade80' : item.prediction.riskLevel === 'Medium' ? '#facc15' : '#f87171'
-                    }))} 
-                    margin={{ top: 20, right: 5, left: -20, bottom: 5 }}
-                  >
-                    <XAxis 
-                      dataKey="date" 
-                      tickFormatter={(v) => new Date(v).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} 
-                      stroke="#ffffff33" 
-                      fontSize={12} 
-                      dy={10} 
-                      tickLine={false}
-                    />
-                    <YAxis stroke="#ffffff33" fontSize={12} domain={[0, 100]} dx={-10} tickLine={false} axisLine={false} />
-                    <Tooltip 
-                      cursor={{ fill: 'rgba(255, 255, 255, 0.05)' }}
-                      content={({ active, payload, label }) => {
-                        if (active && payload && payload.length) {
-                          const data = payload[0].payload;
-                          return (
-                            <div className="bg-black/90 backdrop-blur-md border border-white/10 p-3 rounded-xl shadow-2xl flex flex-col min-w-[120px]">
-                              <span className="text-gray-400 text-xs font-bold mb-2">{label ? new Date(label).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) : ''}</span>
-                              <div className="flex items-center gap-3">
-                                <span className="text-white text-2xl font-black">{Math.round(data.chartProb)}%</span>
-                                <span 
-                                  className="text-[10px] uppercase font-bold px-2 py-1 rounded-md tracking-wider border"
-                                  style={{ 
-                                    color: data.chartColor, 
-                                    backgroundColor: `${data.chartColor}20`,
-                                    borderColor: `${data.chartColor}40`
-                                  }}
-                                >
-                                  {data.prediction.riskLevel} Risk
-                                </span>
-                              </div>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                    <Bar dataKey="chartProb" radius={[6, 6, 0, 0]} maxBarSize={50}>
-                      {
-                        [...history].reverse().map((entry, index) => {
-                          const risk = entry.prediction.riskLevel;
-                          const color = risk === 'Low' ? '#4ade80' : risk === 'Medium' ? '#facc15' : '#f87171';
-                          return <Cell key={`cell-${index}`} fill={color} />;
-                        })
-                      }
-                      <LabelList 
-                        dataKey="chartProb" 
-                        position="top" 
-                        fill="#9ca3af" 
-                        fontSize={11} 
-                        fontWeight="bold"
+                        ...item,
+                        displayDate: new Date(item.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+                        prob: Array.isArray(item.prediction.probability) ? item.prediction.probability[0] : item.prediction.probability,
+                        color: item.prediction.riskLevel === 'Low' ? '#22c55e' : item.prediction.riskLevel === 'Medium' ? '#eab308' : '#ef4444'
+                      }))} 
+                      margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                    >
+                      <defs>
+                        <linearGradient id="colorProb" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.3}/>
+                          <stop offset="95%" stopColor="#06b6d4" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                      <XAxis 
+                        dataKey="displayDate" 
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: '#9ca3af', fontSize: 10 }}
+                        dy={10}
                       />
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              ) : (
+                      <YAxis 
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: '#9ca3af', fontSize: 10 }}
+                        domain={[0, 100]}
+                      />
+                      <Tooltip 
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const data = payload[0].payload;
+                            return (
+                              <div className="bg-gray-900/90 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl">
+                                <p className="text-[10px] uppercase font-bold text-gray-500 mb-1">{data.displayDate}</p>
+                                <div className="flex items-center gap-3">
+                                  <span className="text-2xl font-black text-white">{Math.round(data.prob)}%</span>
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-tighter border" style={{ color: data.color, borderColor: `${data.color}40`, backgroundColor: `${data.color}10` }}>
+                                    {data.prediction.riskLevel} Risk
+                                  </span>
+                                </div>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                      <Area 
+                        type="monotone" 
+                        dataKey="prob" 
+                        stroke="#06b6d4" 
+                        strokeWidth={3}
+                        fillOpacity={1} 
+                        fill="url(#colorProb)" 
+                        animationDuration={1500}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+                ) : (
                 <div className="w-full h-full flex items-center justify-center bg-white/5 rounded-xl border border-dashed border-white/10 animate-pulse">
                   <span className="text-[10px] uppercase font-bold text-gray-600">Calculating dimensions...</span>
                 </div>

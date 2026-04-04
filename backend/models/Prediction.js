@@ -7,6 +7,11 @@ const predictionSchema = new mongoose.Schema({
         severity: { type: String, enum: ['none', 'mild', 'moderate', 'severe'], required: true }
     }],
     durationDays: { type: Number, required: true },
+    vitals: {
+        spO2: { type: Number },
+        heartRate: { type: Number },
+        bpSystolic: { type: Number }
+    },
     prediction: {
         riskLevel: { type: String, required: true },
         probability: [Number],

@@ -24,7 +24,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
-const AVAILABLE_SYMPTOMS = ["Fever", "Cough", "Shortness of Breath", "Fatigue", "Headache", "Nausea", "Chest Pain"];
+const AVAILABLE_SYMPTOMS = ["Fever", "Cough", "Shortness of Breath", "Fatigue", "Headache", "Nausea", "Chest Pain", "Taste/Smell Loss"];
 
 type Message = {
   id: string;
@@ -48,12 +48,13 @@ export default function PredictPage() {
     { id: "1", role: "ai", type: "text", text: "Hello! I am HealthAI. What symptoms are you experiencing today? Please select from the options below." }
   ]);
   
-  const [step, setStep] = useState<"symptoms" | "severity" | "duration" | "finished">("symptoms");
+  const [step, setStep] = useState<"symptoms" | "severity" | "vitals" | "duration" | "finished">("symptoms");
   
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [customSymptom, setCustomSymptom] = useState("");
   const [severity, setSeverity] = useState<string>("mild");
   const [duration, setDuration] = useState<number>(1);
+  const [vitals, setVitals] = useState({ spO2: 98, heartRate: 75, bpSystolic: 120 });
   const [isListening, setIsListening] = useState(false);
 
   useEffect(() => {
@@ -145,9 +146,17 @@ export default function PredictPage() {
       setMessages(prev => [
          ...prev,
          { id: Date.now().toString(), role: "user", type: "text", text: `They feel ${severity}.` },
-         { id: (Date.now()+1).toString(), role: "ai", type: "text", text: "I see. And how many days have you been feeling this way?" }
+         { id: (Date.now()+1).toString(), role: "ai", type: "text", text: "Please enter your vital signs (SpO2, Heart Rate, BP) for a more accurate report." }
       ]);
-      setStep("duration");
+      setStep("vitals");
+    }
+    else if (step === "vitals") {
+        setMessages(prev => [
+           ...prev,
+           { id: Date.now().toString(), role: "user", type: "text", text: `SpO2: ${vitals.spO2}%, HR: ${vitals.heartRate} bpm, BP: ${vitals.bpSystolic} mmHg.` },
+           { id: (Date.now()+1).toString(), role: "ai", type: "text", text: "I see. And how many days have you been feeling this way?" }
+        ]);
+        setStep("duration");
     }
     else if (step === "duration") {
        setMessages(prev => [
@@ -170,6 +179,7 @@ export default function PredictPage() {
     try {
       const { data } = await api.post("/health/predict", {
         symptoms: formattedSymptoms,
+        vitals: vitals,
         durationDays: duration
       });
       
@@ -494,6 +504,28 @@ export default function PredictPage() {
                          Send <Send className="w-4 h-4"/>
                     </button>
                  </div>
+              )}
+
+              {step === "vitals" && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-400 uppercase">Oxygen (SpO2 %)</label>
+                      <input type="number" value={vitals.spO2} onChange={e => setVitals({...vitals, spO2: parseInt(e.target.value)})} className="w-full bg-white/5 border border-white/10 rounded-xl p-2 text-white" min="70" max="100" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-gray-400 uppercase">Heart Rate (BPM)</label>
+                      <input type="number" value={vitals.heartRate} onChange={e => setVitals({...vitals, heartRate: parseInt(e.target.value)})} className="w-full bg-white/5 border border-white/10 rounded-xl p-2 text-white" min="40" max="200" />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-gray-400 uppercase">Systolic BP (mmHg)</label>
+                        <input type="number" value={vitals.bpSystolic} onChange={e => setVitals({...vitals, bpSystolic: parseInt(e.target.value)})} className="w-full bg-white/5 border border-white/10 rounded-xl p-2 text-white" min="70" max="250" />
+                    </div>
+                  </div>
+                  <button onClick={handleNextStep} className="btn-secondary py-2 px-6 flex items-center gap-2 w-full justify-center">
+                      Confirm Vitals <Send className="w-4 h-4"/>
+                  </button>
+                </div>
               )}
 
               {step === "duration" && (

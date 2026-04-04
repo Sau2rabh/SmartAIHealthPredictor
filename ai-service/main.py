@@ -14,10 +14,19 @@ class HealthInput(BaseModel):
     smoking: int # 0/1
     alcohol: int # 0/1
     activity_level: int # 0-2
-    fever: int # 0-2
-    cough: int # 0-2
-    fatigue: int # 0-2
-    shortness_breath: int # 0-2
+    # Vitals
+    spO2: float
+    heart_rate: float
+    bp_systolic: float
+    # Symptoms (0: None, 1: Mild, 2: Severe)
+    fever: int
+    cough: int
+    fatigue: int
+    shortness_breath: int
+    taste_smell_loss: int # 0/1
+    chest_pain: int
+    headache: int
+    nausea: int
 
 @app.get("/")
 def read_root():
@@ -27,12 +36,14 @@ def read_root():
 def predict_risk(data: HealthInput):
     try:
         # Check if model is initialized
-        if health_model.model is None: # Model check
+        if health_model.model is None:
              raise HTTPException(status_code=500, detail="Model is not trained yet. Run /train")
              
         features = [
             data.age, data.gender, data.bmi, data.smoking, data.alcohol,
-            data.activity_level, data.fever, data.cough, data.fatigue, data.shortness_breath
+            data.activity_level, data.spO2, data.heart_rate, data.bp_systolic,
+            data.fever, data.cough, data.fatigue, data.shortness_breath,
+            data.taste_smell_loss, data.chest_pain, data.headache, data.nausea
         ]
         
         prediction, probability = health_model.predict(features)

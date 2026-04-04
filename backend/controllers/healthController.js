@@ -94,8 +94,21 @@ exports.predictRisk = async (req, res) => {
             return 0;
         };
 
-        // Prepare data for AI Service
-        // [age, gender, bmi, smoking, alcohol, activity_level, fever, cough, fatigue, shortness_breath]
+        // Prepare data for AI Service (17 features)
+        // Prepare data for AI Service (17 features)
+        const getVal = (name) => {
+            const sym = symptoms.find(s => 
+                s.name.toLowerCase().replace(/[\s_/]/g, '') === name.toLowerCase().replace(/[\s_/]/g, '')
+            );
+            if (!sym) return 0;
+            switch(sym.severity) {
+                case 'mild': return 1;
+                case 'moderate': return 1.5; // Fine-tuned severity
+                case 'severe': return 2;
+                default: return 0;
+            }
+        };
+
         const aiInput = {
             age: profile.age,
             gender: profile.gender === 'male' ? 1 : 0,
@@ -103,10 +116,19 @@ exports.predictRisk = async (req, res) => {
             smoking: profile.lifestyle.smoking ? 1 : 0,
             alcohol: profile.lifestyle.alcohol ? 1 : 0,
             activity_level: profile.lifestyle.activityLevel === 'low' ? 0 : (profile.lifestyle.activityLevel === 'moderate' ? 1 : 2),
-            fever: getSeverity('fever'),
-            cough: getSeverity('cough'),
-            fatigue: getSeverity('fatigue'),
-            shortness_breath: getSeverity('shortness_breath')
+            
+            spO2: parseFloat(req.body.vitals?.spO2) || 98.0,
+            heart_rate: parseFloat(req.body.vitals?.heartRate) || 75.0,
+            bp_systolic: parseFloat(req.body.vitals?.bpSystolic) || 120.0,
+
+            fever: getVal('fever'),
+            cough: getVal('cough'),
+            fatigue: getVal('fatigue'),
+            shortness_breath: getVal('shortnessofbreath'),
+            taste_smell_loss: getVal('tastesmellloss') > 0 ? 1 : 0,
+            chest_pain: getVal('chestpain'),
+            headache: getVal('headache'),
+            nausea: getVal('nausea')
         };
 
         try {
@@ -127,6 +149,11 @@ exports.predictRisk = async (req, res) => {
                 user: req.user._id,
                 symptoms,
                 durationDays,
+                vitals: {
+                    spO2: aiInput.spO2,
+                    heartRate: aiInput.heart_rate,
+                    bpSystolic: aiInput.bp_systolic
+                },
                 prediction: {
                     riskLevel: aiResponse.data.risk_level,
                     probability: probabilityValue,
