@@ -2,44 +2,47 @@ import pandas as pd
 import numpy as np
 import os
 
-def generate_health_data(n_samples=2000):
+def generate_health_data(n_samples=5000):
     np.random.seed(42)
     
     # Features
-    age = np.random.randint(18, 80, n_samples)
+    age = np.random.randint(18, 85, n_samples)
     gender = np.random.choice([0, 1], n_samples) # 0: Female, 1: Male
-    bmi = np.random.normal(25, 5, n_samples).clip(15, 45)
-    smoking = np.random.choice([0, 1], n_samples, p=[0.7, 0.3])
-    alcohol = np.random.choice([0, 1], n_samples, p=[0.6, 0.4])
+    bmi = np.random.normal(26, 6, n_samples).clip(15, 50)
+    smoking = np.random.choice([0, 1], n_samples, p=[0.75, 0.25])
+    alcohol = np.random.choice([0, 1], n_samples, p=[0.65, 0.35])
     activity_level = np.random.choice([0, 1, 2], n_samples) # 0: Low, 1: Moderate, 2: High
     
     # Symptoms (0: None, 1: Mild, 2: Severe)
-    fever = np.random.choice([0, 1, 2], n_samples, p=[0.7, 0.2, 0.1])
-    cough = np.random.choice([0, 1, 2], n_samples, p=[0.6, 0.3, 0.1])
-    fatigue = np.random.choice([0, 1, 2], n_samples, p=[0.5, 0.4, 0.1])
-    shortness_breath = np.random.choice([0, 1, 2], n_samples, p=[0.8, 0.15, 0.05])
+    fever = np.random.choice([0, 1, 2], n_samples, p=[0.6, 0.25, 0.15])
+    cough = np.random.choice([0, 1, 2], n_samples, p=[0.6, 0.25, 0.15])
+    fatigue = np.random.choice([0, 1, 2], n_samples, p=[0.5, 0.35, 0.15])
+    shortness_breath = np.random.choice([0, 1, 2], n_samples, p=[0.75, 0.15, 0.1])
     
-    # Calculate Risk Score (Simple heuristic for synthetic data)
-    # This is just a placeholder logic to create labels
+    # Calculate Risk Score (More clinical weighting)
+    # Severe symptoms weighted very heavily now
     risk_score = (
-        (age / 80) * 2 +
-        (bmi / 30) * 1.5 +
-        smoking * 2 +
-        alcohol * 1 +
-        (2 - activity_level) * 1.5 +
-        fever * 2 +
-        cough * 1.5 +
-        fatigue * 1 +
-        shortness_breath * 3
+        (age / 80) * 1.5 +
+        (bmi / 25) * np.where(bmi > 25, 1.2, 0.8) +
+        smoking * 2.5 +
+        alcohol * 1.5 +
+        (2 - activity_level) * 1.0 +
+        (fever * 3.5) +  # Higher weight for fever
+        (cough * 2.5) +
+        (fatigue * 1.5) +
+        (shortness_breath * 5.0) # Critical symptom weighting
     )
     
-    # Assign Risk Level
-    # Low: < 6, Medium: 6-10, High: > 10
+    # Add some randomness/noise to simulate real-world variability
+    risk_score += np.random.normal(0, 1, n_samples)
+    
+    # Assign Risk Level with adjusted thresholds
+    # We want more clear separation for High-Risk cases
     risk_level = []
     for score in risk_score:
-        if score < 7:
+        if score < 8:
             risk_level.append(0) # Low
-        elif score < 12:
+        elif score < 16:
             risk_level.append(1) # Medium
         else:
             risk_level.append(2) # High

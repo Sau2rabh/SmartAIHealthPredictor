@@ -61,11 +61,21 @@ def predict_risk(data: HealthInput):
 @app.post("/train")
 def train_model():
     try:
+        global health_model
         from data_gen import generate_health_data
         data_path = generate_health_data()
-        report = health_model.train(data_path)
-        return {"message": "Model trained successfully", "report": report}
+        
+        # Fresh instance to ensure clean training
+        nm = HealthModel()
+        report = nm.train(data_path)
+        
+        # Update current model in memory
+        health_model = nm
+        
+        return {"message": "Model trained successfully. New accuracy logic applied.", "report": str(report)}
     except Exception as e:
+        import traceback
+        print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
