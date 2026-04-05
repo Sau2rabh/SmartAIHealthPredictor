@@ -111,7 +111,10 @@ export default function Sidebar() {
             </div>
           )}
           {!user && !loading && (
-             <Link href="/login" className="text-sm text-cyan-400 font-bold px-2">Log In</Link>
+             <div className="flex items-center gap-2 px-2">
+                <Link href="/login" className="text-sm text-gray-400 font-medium">Sign In</Link>
+                <Link href="/signup" className="text-sm text-cyan-400 font-bold">Sign Up</Link>
+             </div>
           )}
       </div>
 

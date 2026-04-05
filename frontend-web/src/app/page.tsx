@@ -74,12 +74,12 @@ export default function Home() {
                height={40} 
                className="rounded-xl group-hover:scale-105 transition-transform"
             />
-            <span className="font-extrabold text-2xl tracking-tight text-white hidden md:block">
+            <span className="font-extrabold text-xl md:text-2xl tracking-tight text-white">
               Health<span className="text-cyan-400">AI</span>
             </span>
           </Link>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             {!isStandalone && (
               <button 
                 onClick={handleInstallClick}
@@ -88,10 +88,10 @@ export default function Home() {
                 <Download className="w-4 h-4" /> <span className="hidden sm:inline">Install App</span>
               </button>
             )}
-            <Link href="/login" className="text-sm font-bold text-gray-300 hover:text-white transition-colors">
+            <Link href="/login" className="text-xs sm:text-sm font-bold text-gray-300 hover:text-white transition-colors">
               Sign In
             </Link>
-            <Link href="/signup" className="hidden sm:flex text-sm font-bold text-black bg-cyan-400 hover:bg-cyan-300 px-5 py-2.5 rounded-xl transition-all">
+            <Link href="/signup" className="flex text-xs sm:text-sm font-bold text-black bg-cyan-400 hover:bg-cyan-300 px-3 py-2 sm:px-5 sm:py-2.5 rounded-xl transition-all">
               Sign Up
             </Link>
           </div>
