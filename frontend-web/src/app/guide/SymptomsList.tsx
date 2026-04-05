@@ -61,7 +61,7 @@ export default function SymptomsList({ symptoms }: { symptoms: Symptom[] }) {
         <div className="glass text-center py-16 rounded-3xl opacity-50 flex flex-col items-center">
             <Activity className="w-12 h-12 mb-4 text-cyan-400" />
             <h3 className="text-xl font-bold">No symptoms found</h3>
-            <p className="text-sm">Try using different keywords or selecting "All" categories.</p>
+            <p className="text-sm">Try using different keywords or selecting &quot;All&quot; categories.</p>
         </div>
       ) : (
         <div className="space-y-6">

@@ -196,12 +196,12 @@ export default function Home() {
               <Download className="w-5 h-5 text-cyan-400" /> Install HealthAI
             </h3>
             <p className="text-gray-300 mb-4 text-sm leading-relaxed">
-              Your browser doesn't support direct installation, or the app is not yet ready to be installed. You can still install it manually:
+              Your browser doesn&apos;t support direct installation, or the app is not yet ready to be installed. You can still install it manually:
             </p>
             <ul className="text-gray-400 text-sm space-y-3 list-disc pl-5 mb-6">
               <li><strong>iOS Safari:</strong> Tap the <span className="text-cyan-400">Share</span> icon at the bottom, then select &quot;Add to Home Screen&quot;.</li>
               <li><strong>Android Chrome:</strong> Tap the <span className="text-cyan-400">3-dot menu</span> at the top right and select &quot;Install app&quot; or &quot;Add to Home screen&quot;.</li>
-              <li><strong>Desktop:</strong> Look for the install icon in the right side of your browser's address bar.</li>
+              <li><strong>Desktop:</strong> Look for the install icon in the right side of your browser&apos;s address bar.</li>
             </ul>
             <button 
               onClick={() => setShowFallback(false)}

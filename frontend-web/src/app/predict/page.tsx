@@ -61,8 +61,8 @@ export default function PredictPage() {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const prefilled = params.get("symptom");
-      if (prefilled && !selectedSymptoms.includes(prefilled)) {
-        setSelectedSymptoms(prev => [...prev, prefilled]);
+      if (prefilled) {
+        setSelectedSymptoms(prev => prev.includes(prefilled) ? prev : [...prev, prefilled]);
       }
     }
   }, []);
@@ -345,7 +345,7 @@ export default function PredictPage() {
                                  </div>
                                  <div className="flex-1">
                                     <p className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1">Confidence Score</p>
-                                    <p className="text-sm text-gray-300">The AI model's confidence in this risk assessment based on symptom severity and patterns.</p>
+                                    <p className="text-sm text-gray-300">The AI model&apos;s confidence in this risk assessment based on symptom severity and patterns.</p>
                                  </div>
                               </div>
 

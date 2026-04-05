@@ -77,7 +77,7 @@ export default function Guide() {
             <AlertCircle className="w-10 h-10 text-cyan-400 mx-auto mb-6" />
             <h2 className="text-2xl font-bold mb-4">Need a personalized analysis?</h2>
             <p className="text-gray-400 mb-8">
-              Don't just guess. Create an account and use our advanced AI model to get personalized predictions based on your unique health profile and symptoms.
+              Don&apos;t just guess. Create an account and use our advanced AI model to get personalized predictions based on your unique health profile and symptoms.
             </p>
             <Link href="/signup" className="btn-primary">
                 Start Free Analysis
