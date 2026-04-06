@@ -83,6 +83,32 @@ const getSpecialistAndOTC = (symptoms, riskLevel) => {
     return { specialist, otc, isEmergency: hasRedFlag && (riskLevel === 'High' || isSevere) };
 };
 
+const calculateHealthScore = (aiInput, riskLevel, symptoms) => {
+    let score = 100;
+    
+    // 1. Risk Level Impact
+    if (riskLevel === 'High') score -= 40;
+    else if (riskLevel === 'Medium') score -= 20;
+
+    // 2. Symptoms Impact
+    symptoms.forEach(s => {
+        if (s.severity === 'severe') score -= 10;
+        else if (s.severity === 'mild') score -= 5;
+    });
+
+    // 3. Vitals Impact
+    if (aiInput.spO2 < 95) score -= 15;
+    if (aiInput.bp_systolic > 140 || aiInput.bp_systolic < 90) score -= 10;
+    if (aiInput.heart_rate > 100 || aiInput.heart_rate < 60) score -= 5;
+
+    // 4. Lifestyle Impact
+    if (aiInput.smoking) score -= 5;
+    if (aiInput.alcohol) score -= 5;
+    if (aiInput.bmi > 25 || aiInput.bmi < 18.5) score -= 5;
+
+    return Math.max(10, score); // Minimum score of 10
+};
+
 // @desc    Get prediction results
 // @route   POST /api/health/predict
 exports.predictRisk = async (req, res) => {
@@ -169,7 +195,8 @@ exports.predictRisk = async (req, res) => {
                     probability: probabilityValue,
                     recommendations: aiResponse.data.recommendations,
                     suggestedSpecialist: enrichedData.specialist,
-                    otcMedicines: enrichedData.otc
+                    otcMedicines: enrichedData.otc,
+                    healthScore: calculateHealthScore(aiInput, aiResponse.data.risk_level, symptoms)
                 }
             });
 
@@ -217,7 +244,8 @@ exports.predictRisk = async (req, res) => {
                     probability,
                     recommendations,
                     suggestedSpecialist: enrichedData.specialist,
-                    otcMedicines: enrichedData.otc
+                    otcMedicines: enrichedData.otc,
+                    healthScore: calculateHealthScore(aiInput, riskLevel, symptoms)
                 }
             });
 

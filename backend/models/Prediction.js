@@ -17,7 +17,8 @@ const predictionSchema = new mongoose.Schema({
         probability: [Number],
         recommendations: [String],
         suggestedSpecialist: { type: String },
-        otcMedicines: [{ type: String }]
+        otcMedicines: [{ type: String }],
+        healthScore: { type: Number, default: 0 } // 0-100 score
     },
     date: { type: Date, default: Date.now }
 });

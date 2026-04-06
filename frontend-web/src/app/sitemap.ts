@@ -1,38 +1,44 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://healthai.example.com';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://healthai.example.com';
   
   return [
     {
-      url: `${baseUrl}/`,
+      url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'monthly',
       priority: 1,
     },
     {
-      url: `${baseUrl}/about`,
+      url: `${baseUrl}/dashboard`,
       lastModified: new Date(),
-      changeFrequency: 'monthly',
+      changeFrequency: 'weekly',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/guide`,
+      url: `${baseUrl}/predict`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/signup`,
+      url: `${baseUrl}/chat`,
       lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.5,
+      changeFrequency: 'weekly',
+      priority: 0.8,
     },
     {
-      url: `${baseUrl}/login`,
+      url: `${baseUrl}/report-analyzer`,
       lastModified: new Date(),
-      changeFrequency: 'yearly',
-      priority: 0.5,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/emergency/nearby`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
     },
   ];
 }

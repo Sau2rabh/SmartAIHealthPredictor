@@ -1,12 +1,14 @@
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://healthai.example.com';
+
   return {
     rules: {
       userAgent: '*',
-      allow: ['/', '/about', '/guide'],
-      disallow: ['/dashboard', '/profile', '/history', '/predict', '/api/'],
+      allow: '/',
+      disallow: ['/api/', '/_next/', '/static/'],
     },
-    sitemap: 'https://healthai.example.com/sitemap.xml',
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

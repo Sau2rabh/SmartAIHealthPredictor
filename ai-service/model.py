@@ -14,6 +14,12 @@ class HealthModel:
         self.model = None
         self.scaler = None
         
+        self.feature_names = [
+            'age', 'gender', 'bmi', 'smoking', 'alcohol', 'activity_level', 
+            'spO2', 'heart_rate', 'bp_systolic', 'fever', 'cough', 'fatigue', 
+            'shortness_breath', 'taste_smell_loss', 'chest_pain', 'headache', 'nausea'
+        ]
+        
         if os.path.exists(self.model_path) and os.path.exists(self.scaler_path):
             self.load()
             
@@ -48,8 +54,8 @@ class HealthModel:
             raise Exception("Model not loaded or trained yet.")
         
         # Features should be a list in the same order as in data_gen.py
-        # [age, gender, bmi, smoking, alcohol, activity_level, fever, cough, fatigue, shortness_breath]
-        features_scaled = self.scaler.transform([features])
+        features_df = pd.DataFrame([features], columns=self.feature_names)
+        features_scaled = self.scaler.transform(features_df)
         prediction = self.model.predict(features_scaled)[0]
         probability = self.model.predict_proba(features_scaled)[0].tolist()
         

@@ -25,6 +25,9 @@ app.use((req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/health', healthRoutes);
 app.use('/api/emergency', require('./routes/emergencyRoutes'));
+app.use('/api/medications', require('./routes/medicationRoutes'));
+app.use('/api/vitals', require('./routes/vitalsRoutes'));
+app.use('/api/family', require('./routes/familyRoutes'));
 
 app.get('/', (req, res) => {
     res.json({ message: 'AI Health Risk Predictor API is running...', status: 'OK' });

@@ -2,12 +2,24 @@
 
 import { usePathname } from "next/navigation";
 import Sidebar from "./Sidebar";
-import React from "react";
-import SOSButton from "./emergency/SOSButton";
+import React, { useState, useEffect, useRef } from "react";
+import SOSButton, { SOSButtonRef } from "./emergency/SOSButton";
+import VoiceSathi, { VoiceSathiRef } from "./VoiceSathi";
+import MobileFloatingMenu from "./MobileFloatingMenu";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [isMobile, setIsMobile] = useState(false);
+  const sosRef = useRef<SOSButtonRef>(null);
+  const sathiRef = useRef<VoiceSathiRef>(null);
   
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const publicRoutes = ['/login', '/signup', '/', '/about', '/guide'];
   const isPublicRoute = publicRoutes.includes(pathname);
 
@@ -22,9 +34,16 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   return (
     <div className="flex min-h-screen relative z-10 w-full">
       <Sidebar />
-      <div className="flex-1 min-w-0 md:pl-64 pt-16 md:pt-0 pb-[68px] md:pb-0 flex flex-col">
+      <div className="flex-1 min-w-0 md:pl-[18rem] pt-16 md:pt-6 pb-6 flex flex-col px-4 md:px-8">
         {children}
-        <SOSButton />
+        <SOSButton ref={sosRef} hideButton={isMobile} />
+        <VoiceSathi ref={sathiRef} hideButton={isMobile} />
+        {isMobile && (
+          <MobileFloatingMenu 
+            onEmergency={() => sosRef.current?.open()} 
+            onAnalyze={() => sathiRef.current?.open()} 
+          />
+        )}
       </div>
     </div>
   );

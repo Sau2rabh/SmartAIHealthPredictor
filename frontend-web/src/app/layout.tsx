@@ -15,10 +15,10 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://healthai.example.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
   title: {
     default: "HealthAI | AI Medical Symptom Checker & Predictor",
-    template: "%s | HealthAI Risk Predictor"
+    template: "%s | HealthAI"
   },
   description: "Advanced AI health risk predictor. Check symptoms online, identify early warning signs, and get personalized health recommendations instantly.",
   keywords: ["AI Health Check", "Symptom Checker", "Health Risk Predictor", "Medical AI", "Online Health AI", "Health Monitoring"],

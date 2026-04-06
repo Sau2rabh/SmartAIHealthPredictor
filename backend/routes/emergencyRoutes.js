@@ -86,4 +86,24 @@ router.post('/sos', protect, async (req, res) => {
     }
 });
 
+// @desc    Enhance hospital list with AI details
+// @route   POST /api/emergency/enhance-hospitals
+router.post('/enhance-hospitals', async (req, res) => {
+    const { hospitals } = req.body;
+    try {
+        const response = await axios.post(`${process.env.AI_SERVICE_URL || 'http://localhost:8000'}/enhance-hospitals`, {
+            hospitals: hospitals.map(h => ({ 
+                id: h.id,
+                name: h.tags?.name || "Hospital",
+                lat: parseFloat(h.lat),
+                lon: parseFloat(h.lon)
+            }))
+        });
+        res.json(response.data);
+    } catch (error) {
+        console.error("AI Enhancement Error:", error.message);
+        res.status(500).json({ message: "Failed to fetch AI details" });
+    }
+});
+
 module.exports = router;
