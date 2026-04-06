@@ -325,6 +325,34 @@ export default function PredictPage() {
                                 </div>
                               </div>
 
+                              {msg.resultData.prediction.isEmergency && (
+                                <div className="bg-red-600/20 border-2 border-red-500 p-6 rounded-2xl animate-pulse ring-4 ring-red-500/10">
+                                   <div className="flex items-center gap-4 mb-3">
+                                      <div className="bg-red-500 p-2 rounded-lg">
+                                         <AlertCircle className="w-6 h-6 text-white" />
+                                      </div>
+                                      <h3 className="text-xl font-black text-white uppercase tracking-tighter">Emergency Alert!</h3>
+                                   </div>
+                                   <p className="text-red-200 text-sm font-bold leading-relaxed">
+                                      Your symptoms indicate a potentially life-threatening condition. Please call emergency services (108/112) or go to the nearest emergency room immediately.
+                                   </p>
+                                   <div className="mt-4 flex gap-3">
+                                      <button 
+                                        onClick={() => router.push('/emergency/nearby')}
+                                        className="bg-white text-red-600 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-gray-100 transition-colors"
+                                      >
+                                        Find Nearest Hospital
+                                      </button>
+                                      <a 
+                                        href="tel:112"
+                                        className="bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-red-400 transition-colors"
+                                      >
+                                        Call Emergency
+                                      </a>
+                                   </div>
+                                </div>
+                              )}
+
                               <div className="flex items-center justify-between">
                                 <h3 className="font-bold text-lg text-white">Analysis Result</h3>
                                 <div className={`inline-flex items-center justify-center h-6 px-3 rounded-full text-[11px] font-bold uppercase tracking-widest ${

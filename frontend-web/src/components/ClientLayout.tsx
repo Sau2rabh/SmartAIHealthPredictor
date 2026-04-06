@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Sidebar from "./Sidebar";
 import React from "react";
+import SOSButton from "./emergency/SOSButton";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -23,6 +24,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <Sidebar />
       <div className="flex-1 min-w-0 md:pl-64 pt-16 md:pt-0 pb-[68px] md:pb-0 flex flex-col">
         {children}
+        <SOSButton />
       </div>
     </div>
   );

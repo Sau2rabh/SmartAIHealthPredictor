@@ -12,6 +12,17 @@ const healthProfileSchema = new mongoose.Schema({
         alcohol: { type: Boolean, default: false },
         activityLevel: { type: String, enum: ['low', 'moderate', 'high'], default: 'moderate' }
     },
+    emergencyInfo: {
+        bloodGroup: { type: String, default: "" },
+        allergies: [{ type: String }],
+        chronicConditions: [{ type: String }],
+        medications: [{ type: String }],
+        emergencyContact: {
+            name: { type: String, default: "" },
+            relationship: { type: String, default: "" },
+            phone: { type: String, default: "" }
+        }
+    },
     updatedAt: { type: Date, default: Date.now }
 });
 

@@ -74,6 +74,23 @@ export default function ProfilePage() {
       alcohol: false,
       activityLevel: "moderate",
     },
+    emergencyInfo: {
+      bloodGroup: "",
+      allergies: [] as string[],
+      chronicConditions: [] as string[],
+      medications: [] as string[],
+      emergencyContact: {
+        name: "",
+        relationship: "",
+        phone: "",
+      }
+    }
+  });
+
+  const [emergencyFields, setEmergencyFields] = useState({
+    allergy: "",
+    chronic: "",
+    med: ""
   });
 
   useEffect(() => {
@@ -104,6 +121,17 @@ export default function ProfilePage() {
               alcohol: data.lifestyle?.alcohol || false,
               activityLevel: data.lifestyle?.activityLevel || "moderate",
             },
+            emergencyInfo: {
+              bloodGroup: data.emergencyInfo?.bloodGroup || "",
+              allergies: data.emergencyInfo?.allergies || [],
+              chronicConditions: data.emergencyInfo?.chronicConditions || [],
+              medications: data.emergencyInfo?.medications || [],
+              emergencyContact: {
+                name: data.emergencyInfo?.emergencyContact?.name || "",
+                relationship: data.emergencyInfo?.emergencyContact?.relationship || "",
+                phone: data.emergencyInfo?.emergencyContact?.phone || "",
+              }
+            }
           });
         }
       } catch (err) {
@@ -360,6 +388,208 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-8">
+              <div className="glass-card space-y-6">
+                <h2 className="text-xl font-semibold flex items-center gap-2 mb-2">
+                   <AlertCircle className="w-5 h-5 text-red-400" /> Emergency Information
+                </h2>
+
+                <div className="space-y-4">
+                   <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-400">Blood Group</label>
+                      <select
+                        value={formData.emergencyInfo.bloodGroup}
+                        onChange={(e) => setFormData({ 
+                            ...formData, 
+                            emergencyInfo: { ...formData.emergencyInfo, bloodGroup: e.target.value } 
+                        })}
+                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 focus:border-red-500/50 outline-none transition-all appearance-none"
+                      >
+                        <option value="" className="bg-gray-900">Select Blood Group</option>
+                        {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map(bg => (
+                            <option key={bg} value={bg} className="bg-gray-900">{bg}</option>
+                        ))}
+                      </select>
+                   </div>
+
+                   <div className="space-y-2">
+                      <label className="text-sm font-medium text-gray-400">Emergency Contact</label>
+                      <div className="grid grid-cols-1 gap-3">
+                          <input
+                            type="text"
+                            placeholder="Contact Name"
+                            value={formData.emergencyInfo.emergencyContact.name}
+                            onChange={(e) => setFormData({ 
+                                ...formData, 
+                                emergencyInfo: { 
+                                    ...formData.emergencyInfo, 
+                                    emergencyContact: { ...formData.emergencyInfo.emergencyContact, name: e.target.value } 
+                                } 
+                            })}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 focus:border-red-500/50 outline-none transition-all"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Relationship (e.g. Spouse, Parent)"
+                            value={formData.emergencyInfo.emergencyContact.relationship}
+                            onChange={(e) => setFormData({ 
+                                ...formData, 
+                                emergencyInfo: { 
+                                    ...formData.emergencyInfo, 
+                                    emergencyContact: { ...formData.emergencyInfo.emergencyContact, relationship: e.target.value } 
+                                } 
+                            })}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 focus:border-red-500/50 outline-none transition-all"
+                          />
+                          <input
+                            type="tel"
+                            placeholder="Phone Number (e.g. +91...)"
+                            value={formData.emergencyInfo.emergencyContact.phone}
+                            onChange={(e) => setFormData({ 
+                                ...formData, 
+                                emergencyInfo: { 
+                                    ...formData.emergencyInfo, 
+                                    emergencyContact: { ...formData.emergencyInfo.emergencyContact, phone: e.target.value } 
+                                } 
+                            })}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 focus:border-red-500/50 outline-none transition-all"
+                          />
+                      </div>
+                   </div>
+
+                   <div className="space-y-2">
+                       <label className="text-sm font-medium text-gray-400">Allergies</label>
+                       <div className="flex flex-wrap gap-2 mb-2">
+                           {formData.emergencyInfo.allergies.map(a => (
+                               <span key={a} className="px-3 py-1 bg-red-500/20 text-red-300 rounded-full text-xs font-bold flex items-center gap-2">
+                                   {a}
+                                   <button type="button" onClick={() => setFormData({
+                                       ...formData,
+                                       emergencyInfo: {
+                                           ...formData.emergencyInfo,
+                                           allergies: formData.emergencyInfo.allergies.filter(x => x !== a)
+                                       }
+                                   })}>&times;</button>
+                               </span>
+                           ))}
+                       </div>
+                       <div className="flex gap-2">
+                            <input
+                                type="text"
+                                placeholder="Add allergy"
+                                value={emergencyFields.allergy}
+                                onChange={(e) => setEmergencyFields({...emergencyFields, allergy: e.target.value})}
+                                className="flex-1 bg-white/5 border border-white/10 rounded-xl py-2 px-4 focus:border-red-500/50 outline-none transition-all text-sm"
+                            />
+                            <button 
+                                type="button"
+                                onClick={() => {
+                                    if (!emergencyFields.allergy) return;
+                                    setFormData({
+                                        ...formData,
+                                        emergencyInfo: {
+                                            ...formData.emergencyInfo,
+                                            allergies: [...formData.emergencyInfo.allergies, emergencyFields.allergy]
+                                        }
+                                    });
+                                    setEmergencyFields({...emergencyFields, allergy: ""});
+                                }}
+                                className="bg-red-500/20 hover:bg-red-500/40 text-red-300 rounded-xl px-4 text-xs font-bold"
+                            >
+                                Add
+                            </button>
+                       </div>
+                   </div>
+
+                   <div className="space-y-2">
+                       <label className="text-sm font-medium text-gray-400">Chronic Conditions</label>
+                       <div className="flex flex-wrap gap-2 mb-2">
+                           {formData.emergencyInfo.chronicConditions.map(c => (
+                               <span key={c} className="px-3 py-1 bg-orange-500/20 text-orange-300 rounded-full text-xs font-bold flex items-center gap-2">
+                                   {c}
+                                   <button type="button" onClick={() => setFormData({
+                                       ...formData,
+                                       emergencyInfo: {
+                                           ...formData.emergencyInfo,
+                                           chronicConditions: formData.emergencyInfo.chronicConditions.filter(x => x !== c)
+                                       }
+                                   })}>&times;</button>
+                               </span>
+                           ))}
+                       </div>
+                       <div className="flex gap-2">
+                            <input
+                                type="text"
+                                placeholder="e.g. Diabetes, Asthma"
+                                value={emergencyFields.chronic}
+                                onChange={(e) => setEmergencyFields({...emergencyFields, chronic: e.target.value})}
+                                className="flex-1 bg-white/5 border border-white/10 rounded-xl py-2 px-4 focus:border-red-500/50 outline-none transition-all text-sm"
+                            />
+                            <button 
+                                type="button"
+                                onClick={() => {
+                                    if (!emergencyFields.chronic) return;
+                                    setFormData({
+                                        ...formData,
+                                        emergencyInfo: {
+                                            ...formData.emergencyInfo,
+                                            chronicConditions: [...formData.emergencyInfo.chronicConditions, emergencyFields.chronic]
+                                        }
+                                    });
+                                    setEmergencyFields({...emergencyFields, chronic: ""});
+                                }}
+                                className="bg-red-500/20 hover:bg-red-500/40 text-red-300 rounded-xl px-4 text-xs font-bold"
+                            >
+                                Add
+                            </button>
+                       </div>
+                   </div>
+
+                   <div className="space-y-2">
+                       <label className="text-sm font-medium text-gray-400">Current Medications</label>
+                       <div className="flex flex-wrap gap-2 mb-2">
+                           {formData.emergencyInfo.medications.map(m => (
+                               <span key={m} className="px-3 py-1 bg-cyan-500/20 text-cyan-300 rounded-full text-xs font-bold flex items-center gap-2">
+                                   {m}
+                                   <button type="button" onClick={() => setFormData({
+                                       ...formData,
+                                       emergencyInfo: {
+                                           ...formData.emergencyInfo,
+                                           medications: formData.emergencyInfo.medications.filter(x => x !== m)
+                                       }
+                                   })}>&times;</button>
+                               </span>
+                           ))}
+                       </div>
+                       <div className="flex gap-2">
+                            <input
+                                type="text"
+                                placeholder="e.g. Insulin, Aspirin"
+                                value={emergencyFields.med}
+                                onChange={(e) => setEmergencyFields({...emergencyFields, med: e.target.value})}
+                                className="flex-1 bg-white/5 border border-white/10 rounded-xl py-2 px-4 focus:border-red-500/50 outline-none transition-all text-sm"
+                            />
+                            <button 
+                                type="button"
+                                onClick={() => {
+                                    if (!emergencyFields.med) return;
+                                    setFormData({
+                                        ...formData,
+                                        emergencyInfo: {
+                                            ...formData.emergencyInfo,
+                                            medications: [...formData.emergencyInfo.medications, emergencyFields.med]
+                                        }
+                                    });
+                                    setEmergencyFields({...emergencyFields, med: ""});
+                                }}
+                                className="bg-red-500/20 hover:bg-red-500/40 text-red-300 rounded-xl px-4 text-xs font-bold"
+                            >
+                                Add
+                            </button>
+                       </div>
+                   </div>
+                </div>
+              </div>
+
               <BMIGauge height={formData.height} weight={formData.weight} />
             </div>
           </div>

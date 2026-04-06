@@ -24,6 +24,7 @@ app.use((req, res, next) => {
 // Routes Middleware
 app.use('/api/auth', authRoutes);
 app.use('/api/health', healthRoutes);
+app.use('/api/emergency', require('./routes/emergencyRoutes'));
 
 app.get('/', (req, res) => {
     res.json({ message: 'AI Health Risk Predictor API is running...', status: 'OK' });

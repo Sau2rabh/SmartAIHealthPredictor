@@ -5,7 +5,7 @@ const axios = require('axios');
 // @desc    Create or update health profile
 // @route   POST /api/health/profile
 exports.upsertProfile = async (req, res) => {
-    const { age, gender, weight, height, lifestyle } = req.body;
+    const { age, gender, weight, height, lifestyle, emergencyInfo } = req.body;
 
     try {
         let profile = await HealthProfile.findOne({ user: req.user._id });
@@ -17,6 +17,7 @@ exports.upsertProfile = async (req, res) => {
             profile.weight = weight || profile.weight;
             profile.height = height || profile.height;
             profile.lifestyle = lifestyle || profile.lifestyle;
+            profile.emergencyInfo = emergencyInfo || profile.emergencyInfo;
             await profile.save();
         } else {
             // Create
@@ -26,7 +27,8 @@ exports.upsertProfile = async (req, res) => {
                 gender,
                 weight,
                 height,
-                lifestyle
+                lifestyle,
+                emergencyInfo
             });
         }
 
@@ -53,9 +55,17 @@ const getSpecialistAndOTC = (symptoms, riskLevel) => {
     
     // Map array of symptom objects to array of lowercase strings
     const symps = symptoms.map(s => s.name.toLowerCase());
+    const isSevere = symptoms.some(s => s.severity === 'severe');
+
+    // Emergency/Red-Flag Symptoms
+    const redFlags = ['chest_pain', 'shortness_breath', 'severe_chest_pain'];
+    const hasRedFlag = symps.some(s => redFlags.includes(s.replace(/\s/g, '_')));
 
     // Suggested Specialist logic
-    if (symps.includes('chest_pain') || symps.includes('shortness_breath')) {
+    if (hasRedFlag && (riskLevel === 'High' || isSevere)) {
+        specialist = "EMERGENCY ROOM (ER) / CARDIOLOGIST";
+        otc.push("CALL EMERGENCY SERVICES IMMEDIATELY! Do not drive yourself.");
+    } else if (symps.includes('chest_pain') || symps.includes('shortness_breath')) {
         specialist = "Cardiologist / Pulmonologist";
     } else if (symps.includes('headache') && riskLevel === 'High') {
         specialist = "Neurologist";
@@ -70,7 +80,7 @@ const getSpecialistAndOTC = (symptoms, riskLevel) => {
     if (symps.includes('nausea')) otc.push("Oral Rehydration Salts (ORS), clear fluids");
     if (symps.includes('fatigue')) otc.push("Rest, Hydration, Vitamin C supplements");
 
-    return { specialist, otc };
+    return { specialist, otc, isEmergency: hasRedFlag && (riskLevel === 'High' || isSevere) };
 };
 
 // @desc    Get prediction results

@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { Activity, User, LogOut, History, PlusCircle, LayoutDashboard, MapPin } from "lucide-react";
+import { Activity, User, LogOut, History, PlusCircle, LayoutDashboard, MapPin, ShieldAlert, Siren, QrCode } from "lucide-react";
 
 export default function Sidebar() {
   const { user, logout, loading } = useAuth();
@@ -41,7 +41,13 @@ export default function Sidebar() {
               <SidebarLink href="/dashboard" icon={<LayoutDashboard className="w-5 h-5" />} label="Dashboard" active={pathname === '/dashboard'} />
               <SidebarLink href="/predict" icon={<PlusCircle className="w-5 h-5" />} label="Analyze" active={pathname === '/predict'} />
               <SidebarLink href="/history" icon={<History className="w-5 h-5" />} label="History" active={pathname === '/history'} />
-              <SidebarLink href="/care" icon={<MapPin className="w-5 h-5" />} label="Nearby Care" active={pathname === '/care'} />
+              
+              <div className="pt-4 pb-2 px-4">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500/60">Emergency</p>
+              </div>
+              <SidebarLink href="/emergency/nearby" icon={<MapPin className="w-5 h-5 text-red-400" />} label="Nearby Help" active={pathname === '/emergency/nearby'} />
+              <SidebarLink href="/emergency/id" icon={<QrCode className="w-5 h-5 text-red-400" />} label="Medical ID" active={pathname === '/emergency/id'} />
+              <SidebarLink href="/emergency/first-aid" icon={<Siren className="w-5 h-5 text-red-400" />} label="First Aid" active={pathname === '/emergency/first-aid'} />
             </>
           ) : (
             <div className="pt-4 flex flex-col gap-3 px-2">
@@ -124,7 +130,7 @@ export default function Sidebar() {
             <>
               <MobileBottomLink href="/dashboard" icon={<LayoutDashboard className="w-5 h-5" />} label="Home" active={pathname === '/dashboard'} />
               <MobileBottomLink href="/predict" icon={<PlusCircle className="w-5 h-5" />} label="Analyze" active={pathname === '/predict'} />
-              <MobileBottomLink href="/care" icon={<MapPin className="w-5 h-5" />} label="Care" active={pathname === '/care'} />
+              <MobileBottomLink href="/emergency/nearby" icon={<MapPin className="w-5 h-5 text-red-400" />} label="Emergency" active={pathname === '/emergency/nearby'} />
               <MobileBottomLink href="/history" icon={<History className="w-5 h-5" />} label="History" active={pathname === '/history'} />
               <button
                 onClick={logout}
