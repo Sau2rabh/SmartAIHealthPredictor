@@ -25,7 +25,11 @@ export default function LoginPage() {
       login(data.token, { _id: data._id, name: data.name, email: data.email });
       router.push("/dashboard");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Invalid credentials");
+      if (err.response?.status === 403) {
+        setError("Your email is not verified. Please sign up again to receive a new OTP.");
+      } else {
+        setError(err.response?.data?.message || "Invalid credentials");
+      }
     } finally {
       setLoading(false);
     }

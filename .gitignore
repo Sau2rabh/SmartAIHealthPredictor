@@ -24,6 +24,10 @@ __pycache__/
 .python-version
 pip-log.txt
 pip-delete-this-directory.txt
+*.joblib
+*.csv
+*.h5
+*.nsh
 
 # Build directories
 build/
@@ -61,3 +65,12 @@ frontend-web/final_audit.json
 frontend-web/full_list.txt
 packages.txt
 *.js.map
+*.log
+*.log.*
+npm_error.log
+audit.log
+build.log
+install.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

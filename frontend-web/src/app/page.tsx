@@ -170,16 +170,16 @@ export default function Home() {
       {/* Interactive Section */}
       <section className="py-20 px-6 relative">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/10 blur-[100px] rounded-full -z-10 animate-pulse"></div>
-          <div className="max-w-4xl mx-auto glass-card text-center p-12">
-              <h2 className="text-3xl font-bold mb-6">Ready to take control of your health?</h2>
-              <p className="text-gray-400 mb-10">Join thousands of users who trust HealthAI for their daily health monitoring and risk assessment.</p>
-              <Link href="/signup" className="btn-primary">
+          <div className="max-w-4xl mx-auto glass-card text-center p-6 md:p-12">
+              <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6">Ready to take control of your health?</h2>
+              <p className="text-gray-400 mb-8 md:mb-10 text-sm md:text-base">Join thousands of users who trust HealthAI for their daily health monitoring and risk assessment.</p>
+              <Link href="/signup" className="btn-primary w-full sm:w-auto">
                   Create Your Account Now
               </Link>
           </div>
       </section>
 
-      <footer className="py-12 border-t border-white/5 text-center text-gray-500 text-sm">
+      <footer className="py-12 px-6 border-t border-white/5 text-center text-gray-500 text-xs md:text-sm">
           <p>© 2026 HealthAI Predictor. All rights reserved. For educational purposes only.</p>
       </footer>
 

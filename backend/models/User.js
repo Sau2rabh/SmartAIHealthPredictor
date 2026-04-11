@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     avatar: { type: String, default: "" },
+    avatar: { type: String, default: "" },
+    isVerified: { type: Boolean, default: true },
     date: { type: Date, default: Date.now }
 });
 
