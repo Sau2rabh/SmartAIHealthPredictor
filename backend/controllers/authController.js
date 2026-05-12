@@ -12,18 +12,23 @@ const generateToken = (id) => {
 const sendOTPEmail = async (email, otp, name) => {
     const APPS_SCRIPT_URL = process.env.APPS_SCRIPT_URL;
     if (!APPS_SCRIPT_URL) {
-        console.warn('⚠️ APPS_SCRIPT_URL not set. OTP will not be sent.');
-        return;
+        throw new Error('Email service configuration missing (APPS_SCRIPT_URL not set)');
     }
 
     try {
-        await axios.post(APPS_SCRIPT_URL, {
+        const response = await axios.post(APPS_SCRIPT_URL, {
             email,
             otp,
             name
         });
+        
+        // Google Apps Script might return 200 with an error page or a message
+        if (typeof response.data === 'string' && response.data.includes('Need access')) {
+            throw new Error('Email service access denied. Please check Google Apps Script permissions.');
+        }
     } catch (error) {
         console.error('❌ Error sending OTP via Apps Script:', error.message);
+        throw new Error('Failed to send OTP email: ' + (error.response?.data?.message || error.message));
     }
 };
 
